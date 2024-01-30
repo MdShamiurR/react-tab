@@ -1,26 +1,60 @@
 import React, { useState } from "react";
 
 const Problem1 = () => {
+  const [tasks, setTasks] = useState([]);
+  const [formData, setFormData] = useState({ name: "", status: "" });
   const [show, setShow] = useState("all");
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setTasks([...tasks, formData]);
+    setFormData({ name: "", status: "" });
+  };
 
   const handleClick = (val) => {
     setShow(val);
   };
+
+  const filteredTasks =
+    show === "all"
+      ? tasks
+      : tasks.filter((task) => task.status.toLowerCase() === show);
+
+  const sortedTasks = filteredTasks.sort((a, b) => {
+    if (a.status === "active" && b.status !== "active") return -1;
+    if (a.status === "completed" && b.status !== "completed") return 1;
+    return 0;
+  });
 
   return (
     <div className="container">
       <div className="row justify-content-center mt-5">
         <h4 className="text-center text-uppercase mb-5">Problem-1</h4>
         <div className="col-6 ">
-          <form className="row gy-2 gx-3 align-items-center mb-4">
+          <form
+            className="row gy-2 gx-3 align-items-center mb-4"
+            onSubmit={handleSubmit}
+          >
             <div className="col-auto">
-              <input type="text" className="form-control" placeholder="Name" />
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Name"
+                value={formData.name}
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
+              />
             </div>
             <div className="col-auto">
               <input
                 type="text"
                 className="form-control"
                 placeholder="Status"
+                value={formData.status}
+                onChange={(e) =>
+                  setFormData({ ...formData, status: e.target.value })
+                }
               />
             </div>
             <div className="col-auto">
@@ -61,14 +95,21 @@ const Problem1 = () => {
             </li>
           </ul>
           <div className="tab-content"></div>
-          <table className="table table-striped ">
+          <table className="table table-striped">
             <thead>
               <tr>
                 <th scope="col">Name</th>
                 <th scope="col">Status</th>
               </tr>
             </thead>
-            <tbody></tbody>
+            <tbody>
+              {sortedTasks.map((task, index) => (
+                <tr key={index}>
+                  <td>{task.name}</td>
+                  <td>{task.status}</td>
+                </tr>
+              ))}
+            </tbody>
           </table>
         </div>
       </div>
